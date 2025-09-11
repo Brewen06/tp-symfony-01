@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlayerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
@@ -24,8 +26,17 @@ class Player
     #[ORM\JoinColumn(nullable: false)]
     private ?Level $level = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $groups = null;
+    /**
+     * @var Collection<int, Group>
+     */
+    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'players')]
+    private Collection $groups;
+
+    public function __construct()
+    {
+        $this->groups = new ArrayCollection();
+    }
+    
 
     public function getId(): ?int
     {
@@ -68,15 +79,28 @@ class Player
         return $this;
     }
 
-    public function getGroups(): ?string
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getGroups(): Collection
     {
         return $this->groups;
     }
 
-    public function setGroups(string $groups): static
+    public function addGroup(Group $group): static
     {
-        $this->groups = $groups;
+        if (!$this->groups->contains($group)) {
+            $this->groups->add($group);
+        }
 
         return $this;
     }
+
+    public function removeGroup(Group $group): static
+    {
+        $this->groups->removeElement($group);
+
+        return $this;
+    }
+
 }
