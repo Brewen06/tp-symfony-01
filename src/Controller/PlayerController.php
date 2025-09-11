@@ -7,13 +7,14 @@ use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PlayerController extends AbstractController
 {
     private PlayerRepository $playerRepository;
     private EntityManagerInterface $entityManager;
-
+    private FormFactoryInterface $formFactory;
 
     public function __construct(PlayerRepository $playerRepository, EntityManagerInterface $entityManager)
     {
@@ -48,13 +49,17 @@ class PlayerController extends AbstractController
     public function create(): Response
     {
         $player = new Player();
-        $player->setName('Link');
-        $player->setXp('100');
+        $form = $this->formFactory->create(PlayerType::class, $player);
 
-        $this->$entityManager->persist($player);
-        $entityManager->flush();
+        $form->handleRequest($request);
 
-        return new Response('Player created with id '.$player->getId());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->playerRepository->save($player, true);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('game');
+        }
+
+        return $this->render('game/create.html.twig', ['form' => $form->createView()]);
     }
-
 }
