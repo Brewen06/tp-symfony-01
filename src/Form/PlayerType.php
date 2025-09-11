@@ -2,11 +2,12 @@
 namespace App\Form;
 
 use App\Entity\Player;
+use App\Form\PlayerType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class PlayerType extends AbstractType
 {
@@ -15,6 +16,7 @@ class PlayerType extends AbstractType
         $builder->add('name', TextType::class);
         $builder->add('xp', IntegerType::class, ['label' => "Expérience (XP)"]);
         $builder->add('level');
+        $builder->add('groups');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

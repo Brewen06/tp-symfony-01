@@ -32,7 +32,7 @@ class Level
 
     public function __toString()
     {
-        return $this->lebel;
+        return $this->label;
     }
 
     public function getId(): ?int

@@ -24,6 +24,9 @@ class Player
     #[ORM\JoinColumn(nullable: false)]
     private ?Level $level = null;
 
+    #[ORM\Column(length: 50)]
+    private ?string $groups = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,18 @@ class Player
     public function setLevel(?Level $level): static
     {
         $this->level = $level;
+
+        return $this;
+    }
+
+    public function getGroups(): ?string
+    {
+        return $this->groups;
+    }
+
+    public function setGroups(string $groups): static
+    {
+        $this->groups = $groups;
 
         return $this;
     }
