@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\LevelRepository;
+use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LevelRepository::class)]
-#[ORM\Table(name: "tbl_levels")]
-class Level
+#[ORM\Entity(repositoryClass: GroupRepository::class)]
+#[ORM\Table(name: '`tbl_group`')]
+class Group
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,12 +17,12 @@ class Level
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $label = null;
+    private ?string $name = null;
 
     /**
      * @var Collection<int, Player>
      */
-    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'level')]
+    #[ORM\ManyToMany(targetEntity: Player::class, mappedBy: 'groups')]
     private Collection $players;
 
     public function __construct()
@@ -30,24 +30,19 @@ class Level
         $this->players = new ArrayCollection();
     }
 
-    public function __toString()
-    {
-        return $this->label;
-    }
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getLabel(): ?string
+    public function getName(): ?string
     {
-        return $this->label;
+        return $this->name;
     }
 
-    public function setLabel(string $label): static
+    public function setName(string $name): static
     {
-        $this->label = $label;
+        $this->name = $name;
 
         return $this;
     }
@@ -64,7 +59,7 @@ class Level
     {
         if (!$this->players->contains($player)) {
             $this->players->add($player);
-            $player->setLevel($this);
+            $player->addGroup($this);
         }
 
         return $this;
@@ -73,10 +68,7 @@ class Level
     public function removePlayer(Player $player): static
     {
         if ($this->players->removeElement($player)) {
-            // set the owning side to null (unless already changed)
-            if ($player->getLevel() === $this) {
-                $player->setLevel(null);
-            }
+            $player->removeGroup($this);
         }
 
         return $this;

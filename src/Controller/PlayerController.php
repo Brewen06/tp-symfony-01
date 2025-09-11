@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Player;
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use App\Form\PlayerType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PlayerController extends AbstractController
 {
@@ -16,10 +18,11 @@ class PlayerController extends AbstractController
     private EntityManagerInterface $entityManager;
     private FormFactoryInterface $formFactory;
 
-    public function __construct(PlayerRepository $playerRepository, EntityManagerInterface $entityManager)
+    public function __construct(PlayerRepository $playerRepository, EntityManagerInterface $entityManager, FormFactoryInterface $formFactory)
     {
         $this->playerRepository = $playerRepository;
         $this->entityManager = $entityManager;
+        $this->formFactory = $formFactory;
     }
     
     #[Route('player/delete/{id}', name: 'delete_player')]
@@ -46,7 +49,7 @@ class PlayerController extends AbstractController
     }
 
     #[Route('/player/create', name: 'create_player')]
-    public function create(): Response
+    public function create(Request $request): Response
     {
         $player = new Player();
         $form = $this->formFactory->create(PlayerType::class, $player);
@@ -60,6 +63,6 @@ class PlayerController extends AbstractController
             return $this->redirectToRoute('game');
         }
 
-        return $this->render('game/create.html.twig', ['form' => $form->createView()]);
+        return $this->render('player/create.html.twig', ['form' => $form->createView()]);
     }
 }
