@@ -90,6 +90,7 @@ class Player
         return $this;
     }
 
+<<<<<<< HEAD
     public function getCategories(): ?Category
     {
         return $this->categories;
@@ -138,6 +139,8 @@ class Player
         return $this;
     }
 
+=======
+>>>>>>> c71438b273e27482158b552747735a5199e7d170
     /**
      * @return Collection<int, Group>
      */
@@ -151,6 +154,16 @@ class Player
         if (!$this->groups->contains($group)) {
             $this->groups->add($group);
         }
+<<<<<<< HEAD
+
+        return $this;
+    }
+
+    public function removeGroup(Group $group): static
+    {
+        $this->groups->removeElement($group);
+=======
+>>>>>>> c71438b273e27482158b552747735a5199e7d170
 
         return $this;
     }
@@ -161,4 +174,5 @@ class Player
 
         return $this;
     }
+
 }
