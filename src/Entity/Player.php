@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlayerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
@@ -24,8 +26,28 @@ class Player
     #[ORM\JoinColumn(nullable: false)]
     private ?Level $level = null;
 
+    #[ORM\ManyToOne(inversedBy: 'players')]
+    private ?Category $categories = null;
+
     #[ORM\Column(length: 50)]
-    private ?string $groups = null;
+    private ?string $Archer = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $Chevalier = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $Mage = null;
+
+    /**
+     * @var Collection<int, Group>
+     */
+    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'players')]
+    private Collection $groups;
+
+    public function __construct()
+    {
+        $this->groups = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -68,14 +90,74 @@ class Player
         return $this;
     }
 
-    public function getGroups(): ?string
+    public function getCategories(): ?Category
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(?Category $categories): static
+    {
+        $this->categories = $categories;
+
+        return $this;
+    }
+
+    public function getArcher(): ?string
+    {
+        return $this->Archer;
+    }
+
+    public function setArcher(string $Archer): static
+    {
+        $this->Archer = $Archer;
+
+        return $this;
+    }
+
+    public function getChevalier(): ?string
+    {
+        return $this->Chevalier;
+    }
+
+    public function setChevalier(string $Chevalier): static
+    {
+        $this->Chevalier = $Chevalier;
+
+        return $this;
+    }
+
+    public function getMage(): ?string
+    {
+        return $this->Mage;
+    }
+
+    public function setMage(string $Mage): static
+    {
+        $this->Mage = $Mage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getGroups(): Collection
     {
         return $this->groups;
     }
 
-    public function setGroups(string $groups): static
+    public function addGroup(Group $group): static
     {
-        $this->groups = $groups;
+        if (!$this->groups->contains($group)) {
+            $this->groups->add($group);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(Group $group): static
+    {
+        $this->groups->removeElement($group);
 
         return $this;
     }

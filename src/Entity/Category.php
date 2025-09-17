@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\GroupRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: GroupRepository::class)]
-#[ORM\Table(name: '`tbl_groups`')]
-class Group
+#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Table(name: "tbl_categories")]
+class Category
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,7 +22,7 @@ class Group
     /**
      * @var Collection<int, Player>
      */
-    #[ORM\ManyToMany(targetEntity: Player::class, mappedBy: 'groups')]
+    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'categories')]
     private Collection $players;
 
     public function __construct()
@@ -34,7 +34,7 @@ class Group
     {
         return $this->name;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -64,7 +64,7 @@ class Group
     {
         if (!$this->players->contains($player)) {
             $this->players->add($player);
-            $player->addGroup($this);
+            $player->setCategories($this);
         }
 
         return $this;
@@ -73,7 +73,10 @@ class Group
     public function removePlayer(Player $player): static
     {
         if ($this->players->removeElement($player)) {
-            $player->removeGroup($this);
+            // set the owning side to null (unless already changed)
+            if ($player->getCategories() === $this) {
+                $player->setCategories(null);
+            }
         }
 
         return $this;
