@@ -65,4 +65,10 @@ class PlayerController extends AbstractController
 
         return $this->render('game/create.html.twig', ['form' => $form->createView()]);
     }
+
+    #[Route('/crud/player')]
+    public function crud(): Response
+    {
+        
+    }
 }
