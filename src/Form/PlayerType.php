@@ -16,8 +16,20 @@ class PlayerType extends AbstractType
     {
         $builder->add('name', TextType::class, ['label' => "Nom du joueur"]);
         $builder->add('xp', IntegerType::class, ['label' => "Expérience (XP)"]);
-        $builder->add('level');
-        $builder->add('groups');
+        $builder->add('level', EntityType::class, [
+            'class' => 'App\Entity\Level',
+            'choice_label' => 'label',
+            'label' => 'Niveau',
+            'multiple' => false,
+            'expanded' => false,
+        ]);
+        $builder->add('groups', EntityType::class, [
+            'class' => 'App\Entity\Group',
+            'choice_label' => 'name',
+            'label' => 'Groupe',
+            'multiple' => true,
+            'expanded' => false,
+        ]);
         $builder->add('categories', EntityType::class, [
             'class' => 'App\Entity\Category',
             'choice_label' => 'name',

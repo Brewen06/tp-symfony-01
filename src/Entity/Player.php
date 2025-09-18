@@ -26,18 +26,6 @@ class Player
     #[ORM\JoinColumn(nullable: false)]
     private ?Level $level = null;
 
-    #[ORM\ManyToOne(inversedBy: 'players')]
-    private ?Category $categories = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $Archer = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $Chevalier = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $Mage = null;
-
     /**
      * @var Collection<int, Group>
      */
@@ -50,10 +38,17 @@ class Player
     #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'players')]
     private Collection $games;
 
+    /**
+     * @var Collection<int, Category>
+     */
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'players')]
+    private Collection $categories;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
         $this->games = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -97,53 +92,7 @@ class Player
         return $this;
     }
 
-    public function getCategories(): ?Category
-    {
-        return $this->categories;
-    }
-
-    public function setCategories(?Category $categories): static
-    {
-        $this->categories = $categories;
-
-        return $this;
-    }
-
-    public function getArcher(): ?string
-    {
-        return $this->Archer;
-    }
-
-    public function setArcher(string $Archer): static
-    {
-        $this->Archer = $Archer;
-
-        return $this;
-    }
-
-    public function getChevalier(): ?string
-    {
-        return $this->Chevalier;
-    }
-
-    public function setChevalier(string $Chevalier): static
-    {
-        $this->Chevalier = $Chevalier;
-
-        return $this;
-    }
-
-    public function getMage(): ?string
-    {
-        return $this->Mage;
-    }
-
-    public function setMage(string $Mage): static
-    {
-        $this->Mage = $Mage;
-
-        return $this;
-    }
+    
 
     /**
      * @return Collection<int, Group>
@@ -199,6 +148,27 @@ class Player
         return $this;
     }
 
-   
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
 
+    public function addCategory(Category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
+    }
 }
